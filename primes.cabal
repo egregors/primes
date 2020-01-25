@@ -55,7 +55,7 @@ test-suite primes-test
       Paths_primes
   hs-source-dirs:
       test
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
   build-depends:
       base >=4.7 && <5
     , primes

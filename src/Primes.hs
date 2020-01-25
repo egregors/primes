@@ -8,10 +8,15 @@ sieve []                 = []
 sieve (nextPrime : rest) = nextPrime : sieve noFactors
   where noFactors = filter ((/= 0) . (`mod` nextPrime)) rest
 
-data PrimeError = TooLarge | InvalidValue
+data PrimeError = TooLarge | InvalidValue deriving Eq
 instance Show PrimeError where
   show TooLarge     = "Number is too large"
   show InvalidValue = "Wrong number"
+
+displayResult :: Either PrimeError Bool -> String
+displayResult (Right True      ) = "It's prime number"
+displayResult (Right False     ) = "It's not prime number"
+displayResult (Left  primeError) = show primeError
 
 isPrime :: Int -> Either PrimeError Bool
 isPrime n | n < 2              = Left InvalidValue

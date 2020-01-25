@@ -1,34 +1,27 @@
 import           Test.QuickCheck
 import           Primes
 import           Data.Maybe
+import           Data.Either
 
 prop_validPrimesOnly val = if val < 2 || val >= length primes
-  then isNothing result
-  else isJust result
+  then isLeft result
+  else isRight result
   where result = isPrime val
 
-prop_primesArePrime val = if result == Just True
-  then length divisors == 0
-  else True
+prop_primesArePrime val = (result /= Right True) || null divisors
  where
   result   = isPrime val
   divisors = filter ((== 0) . (val `mod`)) [2 .. (val - 1)]
 
-prop_nonPrimesAreComposite val = if result == Just False
-  then length divisors > 0
-  else True
+prop_nonPrimesAreComposite val = (result /= Right False) || not (null divisors)
  where
   result   = isPrime val
   divisors = filter ((== 0) . (val `mod`)) [2 .. (val - 1)]
 
-prop_factorsMakeOriginal val = if result == Nothing
-  then True
-  else product (fromJust result) == val
+prop_factorsMakeOriginal val = isNothing result || (product (fromJust result) == val)
   where result = primeFactors val
 
-prop_allFactorsPrime val = if result == Nothing
-  then True
-  else all (== Just True) resultsPrime
+prop_allFactorsPrime val = isNothing result || all (== Right True) resultsPrime
  where
   result       = primeFactors val
   resultsPrime = map isPrime (fromJust result)
