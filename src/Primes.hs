@@ -8,10 +8,15 @@ sieve []                 = []
 sieve (nextPrime : rest) = nextPrime : sieve noFactors
   where noFactors = filter ((/= 0) . (`mod` nextPrime)) rest
 
-isPrime :: Int -> Maybe Bool
-isPrime n | n < 2              = Nothing
-          | n >= length primes = Nothing
-          | otherwise          = Just (n `elem` primes)
+data PrimeError = TooLarge | InvalidValue
+instance Show PrimeError where
+  show TooLarge     = "Number is too large"
+  show InvalidValue = "Wrong number"
+
+isPrime :: Int -> Either PrimeError Bool
+isPrime n | n < 2              = Left InvalidValue
+          | n >= length primes = Left TooLarge
+          | otherwise          = Right (n `elem` primes)
 
 unsafePrimeFactors :: Int -> [Int] -> [Int]
 unsafePrimeFactors 0 []              = []
